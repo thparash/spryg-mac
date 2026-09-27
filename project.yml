@@ -28,6 +28,7 @@ targets:
         INFOPLIST_KEY_CFBundleDisplayName: Spryg
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.business
         ENABLE_HARDENED_RUNTIME: YES
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
   SprygMacUITests:
     type: bundle.ui-testing
     platform: macOS
