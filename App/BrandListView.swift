@@ -2,6 +2,7 @@ import SprygKit
 import SwiftUI
 
 struct BrandListView: View {
+    @Environment(Session.self) private var session
     let user: User
 
     var body: some View {
@@ -20,7 +21,7 @@ struct BrandListView: View {
                     .foregroundStyle(Theme.textMuted)
                 if user.isSuperuser {
                     Text("Superuser")
-                        .font(.caption.weight(.semibold))
+                        .font(Theme.badge)
                         .foregroundStyle(Theme.brandText)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 2)
@@ -33,11 +34,12 @@ struct BrandListView: View {
                     .font(Theme.cardTitle)
                     .foregroundStyle(Theme.brandText)
                     .padding(.bottom, 12)
-                ForEach(user.brands) { brand in
-                    Text(brand.name)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.vertical, 10)
-                    if brand.id != user.brands.last?.id {
+                let brands = user.sortedBrands
+                ForEach(brands) { brand in
+                    BrandRow(brand: brand, isActive: brand == session.activeBrand, verticalPadding: 10) {
+                        session.setActiveBrand(brand)
+                    }
+                    if brand.id != brands.last?.id {
                         Divider().overlay(Theme.cardBorder)
                     }
                 }

@@ -35,3 +35,18 @@ public struct User: Equatable, Codable, Sendable {
         self.brands = brands
     }
 }
+
+extension User {
+    /// The User's Brands, sorted by name the way Finder sorts.
+    public var sortedBrands: [Brand] {
+        brands.sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
+    }
+
+    /// The User's Brands whose names contain `query`, ignoring case and accents, sorted by name.
+    /// An empty query returns every Brand.
+    public func brands(matching query: String) -> [Brand] {
+        let query = query.trimmingCharacters(in: .whitespaces)
+        guard !query.isEmpty else { return sortedBrands }
+        return sortedBrands.filter { $0.name.range(of: query, options: [.caseInsensitive, .diacriticInsensitive]) != nil }
+    }
+}

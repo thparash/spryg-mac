@@ -16,11 +16,14 @@ public struct StoredSession: Equatable, Codable, Sendable {
     public let accessToken: String
     public let refreshToken: String?
     public let user: User
+    /// The last Active Brand, so the app reopens on it.
+    public var activeBrandID: Brand.ID?
 
-    public init(accessToken: String, refreshToken: String?, user: User) {
+    public init(accessToken: String, refreshToken: String?, user: User, activeBrandID: Brand.ID? = nil) {
         self.accessToken = accessToken
         self.refreshToken = refreshToken
         self.user = user
+        self.activeBrandID = activeBrandID
     }
 }
 

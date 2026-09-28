@@ -22,7 +22,7 @@ final class SignInSmokeTests: XCTestCase {
 
         app.buttons["signIn.submit"].click()
 
-        XCTAssertTrue(app.staticTexts["Northwind Naturals"].waitForExistence(timeout: 10))
-        XCTAssertTrue(app.staticTexts["Acme Outdoors UK"].exists)
+        XCTAssertTrue(app.buttons["Northwind Naturals"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.buttons["Acme Outdoors UK"].exists)
     }
 }

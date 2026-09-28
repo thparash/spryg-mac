@@ -4,13 +4,21 @@ import SwiftUI
 @main
 struct SprygApp: App {
     @State private var session = Session(environment: AppEnvironment.make())
+    @State private var brandSwitcher = BrandSwitcherState()
 
     var body: some Scene {
         Window("Spryg", id: "main") {
             RootView()
                 .environment(session)
+                .environment(brandSwitcher)
         }
         .commands {
+            CommandGroup(before: .windowSize) {
+                Button("Switch Brand…") { brandSwitcher.isPresented = true }
+                    .keyboardShortcut("k", modifiers: .command)
+                    .disabled(session.user == nil)
+                Divider()
+            }
             CommandGroup(after: .appSettings) {
                 Button("Sign Out", action: signOut)
                     .disabled(session.user == nil)
@@ -19,6 +27,7 @@ struct SprygApp: App {
     }
 
     private func signOut() {
+        brandSwitcher.isPresented = false
         do {
             try session.signOut()
         } catch {
@@ -52,10 +61,17 @@ enum AppEnvironment {
 
 struct RootView: View {
     @Environment(Session.self) private var session
+    @Environment(BrandSwitcherState.self) private var brandSwitcherState
 
     var body: some View {
+        @Bindable var brandSwitcher = brandSwitcherState
         if let user = session.user {
             BrandListView(user: user)
+                .navigationTitle(session.activeBrand?.name ?? "Spryg")
+                .toolbar {
+                    ToolbarItem(placement: .navigation) { BrandSwitcher() }
+                }
+                .sheet(isPresented: $brandSwitcher.isPresented) { BrandPicker() }
         } else {
             SignInView()
         }
