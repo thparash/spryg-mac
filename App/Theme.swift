@@ -1,8 +1,8 @@
 import SwiftUI
 
 /// Spryg's brand, ported from the web dashboard (ADR 0002). Screens take colors, fonts and
-/// card styling from here and nowhere else. Light and dark values live in Assets.xcassets
-/// and follow the Mac's appearance setting.
+/// card styling from here and nowhere else. Values live in Assets.xcassets. The app is light
+/// mode only: its Info.plist sets NSRequiresAquaSystemAppearance, so it ignores the Mac's dark mode.
 ///
 /// Deliberate difference from the web app: its buttons put white text on the brand green
 /// (#379f7e), which is 3.3:1 and fails WCAG AA. Here buttons and small green text use the
@@ -22,7 +22,7 @@ enum Theme {
     static let error = Color("Error")
 
     /// Chart series colors, assigned in this order and never cycled.
-    /// Validated for color-vision deficiency on the card surface in both modes.
+    /// Validated for color-vision deficiency on the white card surface.
     static let chartSeries = [Color("ChartSeries1"), Color("ChartSeries2")]
 
     // MARK: Type
@@ -38,7 +38,7 @@ enum Theme {
 }
 
 extension View {
-    /// A white (or dark) rounded card with a hairline border and soft shadow, like the web dashboard's.
+    /// A white rounded card with a hairline border and soft shadow, like the web dashboard's.
     func sprygCard(padding: CGFloat = 24) -> some View {
         self
             .padding(padding)

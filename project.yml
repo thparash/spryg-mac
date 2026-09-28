@@ -18,6 +18,11 @@ targets:
     type: application
     platform: macOS
     sources: [App]
+    info:
+      path: App/Info.plist
+      properties:
+        # Light mode only (ADR 0002): ignore the Mac's dark appearance.
+        NSRequiresAquaSystemAppearance: true
     dependencies:
       - package: SprygKit
     settings:

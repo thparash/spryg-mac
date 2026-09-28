@@ -131,12 +131,12 @@ It talks to the same Spryg API as the other clients. One Active Brand drives eve
 ### Look and feel
 
 74. As a User, I want spryg-mac to use Spryg's colors, font and logo, so that it feels like the same product as the web app.
-75. As a User, I want the app to follow my Mac's light or dark appearance, so that it matches the rest of my desktop.
+75. As a User, I want the app to look the same as the web dashboard, in light mode, whatever my Mac's appearance setting.
 
 ## Implementation Decisions
 
 - The app is native SwiftUI for macOS 14 and later (ADR 0001). Charts use Swift Charts, tables use SwiftUI `Table`, and state uses `@Observable`.
-- The app carries the web dashboard's brand on native controls (ADR 0002): its colors, the Switzer font, the logo, card style and chart palette, all defined in one theme. Light and dark mode follow the Mac's appearance setting.
+- The app carries the web dashboard's brand on native controls (ADR 0002): its colors, the Switzer font, the logo, card style and chart palette, all defined in one theme. The app is light mode only, even when the Mac is set to dark.
 - There are two modules. The macOS app target holds the SwiftUI screens and menus. A local Swift package, `SprygKit`, holds everything else: the API client, domain models, session, Active Brand, date and currency rules, caching and refresh. Screens depend only on `SprygKit`'s public interface.
 - `SprygKit`'s public interface uses the glossary's terms. Raw API names stay inside it. It offers:
   - session: sign in, sign out, current User, whether the User is a Superuser, their Brands
