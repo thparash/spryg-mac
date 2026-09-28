@@ -2,7 +2,7 @@
 
 **What to build:** A User opens Home and sees the Active Brand's headline sales and advertising metrics, in the Brand's currency, with a Data Through date. This is the first screen with real data. It sets the pattern every later screen follows: a `SprygKit` loader per screen area that returns domain values, API traps handled once while decoding, Marketplace currency, and local-time dates.
 
-**Blocked by:** 03 (Active Brand and Brand switcher)
+**Blocked by:** 03 (Active Brand and Brand switcher), 18 (Spryg theme)
 
 **Status:** ready-for-agent
 

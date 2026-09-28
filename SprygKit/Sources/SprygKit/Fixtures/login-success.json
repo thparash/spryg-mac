@@ -1,0 +1,25 @@
+{
+  "access_token": "fixture-access-token",
+  "refresh_token": "fixture-refresh-token",
+  "email": "pat@example.com",
+  "f_name": "Pat",
+  "l_name": "Rivera",
+  "is_superuser": false,
+  "tenant": [
+    {
+      "id": 12,
+      "name": "Northwind Naturals",
+      "domain": "northwind.api.spryg.io",
+      "seller_id": "A1EXAMPLESELLER1",
+      "marketplace": "ATVPDKIKX0DER",
+      "ads_api_connected": true
+    },
+    {
+      "id": 7,
+      "name": "Acme Outdoors UK",
+      "domain": "acmeuk.api.spryg.io",
+      "seller_id": "A2EXAMPLESELLER2",
+      "marketplace": "A1F83G8C2ARO7P"
+    }
+  ]
+}

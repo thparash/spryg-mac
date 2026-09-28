@@ -1,0 +1,54 @@
+name: SprygMac
+options:
+  bundleIdPrefix: io.spryg
+  deploymentTarget:
+    macOS: "14.0"
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    CODE_SIGN_STYLE: Manual
+    CODE_SIGN_IDENTITY: "-"
+packages:
+  SprygKit:
+    path: SprygKit
+targets:
+  SprygMac:
+    type: application
+    platform: macOS
+    sources: [App]
+    info:
+      path: App/Info.plist
+      properties:
+        # Light mode only (ADR 0002): ignore the Mac's dark appearance.
+        NSRequiresAquaSystemAppearance: true
+    dependencies:
+      - package: SprygKit
+    settings:
+      base:
+        PRODUCT_NAME: Spryg
+        PRODUCT_BUNDLE_IDENTIFIER: io.spryg.mac
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: Spryg
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.business
+        ENABLE_HARDENED_RUNTIME: YES
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+  SprygMacUITests:
+    type: bundle.ui-testing
+    platform: macOS
+    sources: [UITests]
+    dependencies:
+      - target: SprygMac
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: io.spryg.mac.uitests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: SprygMac
+schemes:
+  SprygMac:
+    build:
+      targets:
+        SprygMac: all
+    test:
+      targets: [SprygMacUITests]
