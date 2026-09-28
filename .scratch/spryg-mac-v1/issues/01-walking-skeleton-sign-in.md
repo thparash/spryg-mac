@@ -29,3 +29,5 @@
 - With ad-hoc signing (`CODE_SIGN_IDENTITY: "-"`), the login Keychain may ask for access after a rebuild. Developer ID signing in ticket 05 fixes this.
 - `ReplayTransport` and the fixtures ship in release builds. The launch flag that uses them is Debug-only. Consider keeping them out of release in ticket 05.
 - `Brand.marketplace` is still a raw marketplace ID string. Give it a Marketplace type in ticket 06, alongside currency.
+
+**2026-09-28, live check.** The product owner signed in against the production API with a real account and saw their Brand list. The login contract matches the live API.
