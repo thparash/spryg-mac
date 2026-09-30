@@ -27,6 +27,6 @@
 - **Brand list rows switch the Active Brand too.** The list is a stand-in until Home exists, and clicking a row is the obvious interaction.
 - **Signing in again as the same User keeps their Active Brand.** Ticket 02 (session expiry) relies on this.
 - **Brand requests** are built with `URLComponents` from the Brand's host, and the final URL's host is checked, so nothing in the path can redirect the token.
-- **Open decisions for the product owner:**
-  - Signing out forgets the Active Brand, so the next sign-in lands on the first Brand alphabetically. That's safer on a shared Mac, but story 13 says "open on the Brand I used last".
-  - The Brand list isn't refreshed from the API on launch; it's whatever was saved at the last sign-in.
+- **Decided by the product owner on 2026-09-30:**
+  - Signing out forgets the Active Brand, so the next sign-in lands on the first Brand alphabetically. Story 13 in the spec is updated to match.
+  - The Brand list refreshes only when the User signs in, not on launch. The spec's Keychain wording is updated to match.

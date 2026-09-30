@@ -25,7 +25,7 @@
 **2026-09-28, implemented on `feat/01-walking-skeleton`.** 13 `SprygKit` tests and 1 XCUITest smoke test pass (`make test`). Notes for later tickets:
 
 - Fixtures use made-up values in the shape `spryg-mobile` measured against the live API. They aren't live recordings.
-- The stored session holds the tokens plus the User and their Brands, so the Brand list shown after relaunch is whatever was true at the last sign-in. The password is never stored. Refreshing the Brand list on launch (`/users/user-tenants/`) isn't built yet. The spec's "only the tokens are stored" wording needs a decision: re-fetch the User on launch, or reword the spec.
+- The stored session holds the tokens plus the User and their Brands, so the Brand list shown after relaunch is whatever was true at the last sign-in. The password is never stored. Refreshing the Brand list on launch (`/users/user-tenants/`) isn't built yet. Decided on 2026-09-30: keep it. The Brand list refreshes only on sign-in, and the spec is reworded to match.
 - With ad-hoc signing (`CODE_SIGN_IDENTITY: "-"`), the login Keychain may ask for access after a rebuild. Developer ID signing in ticket 05 fixes this.
 - `ReplayTransport` and the fixtures ship in release builds. The launch flag that uses them is Debug-only. Consider keeping them out of release in ticket 05.
 - `Brand.marketplace` is still a raw marketplace ID string. Give it a Marketplace type in ticket 06, alongside currency.

@@ -33,7 +33,7 @@ It talks to the same Spryg API as the other clients. One Active Brand drives eve
 
 ### Active Brand
 
-13. As a User, I want the app to open on the Brand I used last, so that I can pick up where I left off.
+13. As a User, I want the app to open on the Brand I used last, so that I can pick up where I left off. Signing out forgets it, so the next person on a shared Mac starts fresh.
 14. As a User signing in for the first time, I want the app to open on my first Brand alphabetically, so that I land somewhere sensible.
 15. As a User with several Brands, I want a Brand switcher in the toolbar, so that I can change the Active Brand from any screen.
 16. As a Superuser with many Brands, I want to search the Brand switcher, so that I can find a Brand without scrolling a long list.
@@ -152,14 +152,14 @@ It talks to the same Spryg API as the other clients. One Active Brand drives eve
   - Each API trap is handled once, while decoding, and checked against the list in `spryg-mobile`'s `HANDOFF.md` §3. Examples: `last_` means prior year, `period1..13` keys run backwards, daily endpoints ignore `date_range`, `roas` means different things on different endpoints, and trailing slashes are inconsistent. Raw API field names never reach the screens.
 - The token is attached to a request only if the Brand's host matches `<name>.api.spryg.io`.
 - Access is just User or Superuser (the `is_superuser` flag), plus the User's Brands. The `role` field in the token is ignored. Superuser-only screens and content are gated exactly as the web app gates them: Command Center needs Superuser and more than one Brand, and the extra Sales cards and Settings links are Superuser-only.
-- There is one Active Brand per app. It persists across launches as the last used Brand, falling back to the first Brand alphabetically. Changing it reloads the current screen for the new Brand and clears any applied Saved Filter.
+- There is one Active Brand per app. It persists across launches as the last used Brand, falling back to the first Brand alphabetically. Signing out forgets it. Changing it reloads the current screen for the new Brand and clears any applied Saved Filter.
 - Saved Filters are read from the Active Brand's host and applied as channel, Product Brand, category and ASIN selections. v1 doesn't create, edit or delete them.
 - "Today" and period presets are computed in the Mac's local time zone, as the web app does. Calendar dates from the API are shown as the same calendar date and never shifted by time zone. Request ranges use the `date_range` format the API expects.
 - A Brand's currency comes from its Marketplace: US→USD, UK→GBP, DE/FR/IT/ES/NL→EUR, SE→SEK, PL→PLN, JP→JPY, AU→AUD, CA→CAD, MX→MXN. If the Marketplace is missing, fall back to the web app's legacy rule based on seller ID and domain. Portfolio totals copy the web app: amounts are summed across Brands and shown with "$".
 - Data Through comes from each screen's own data (the latest date it contains), matching the web app's "Data available through". Where an endpoint doesn't carry it, use the data pipeline's last-pulled date.
 - Data reloads when a screen opens, when a window becomes key again, on ⌘R, and every 15 minutes while a window is visible. There's no faster polling.
 - The app caches the last successful response for each Brand, screen, period and filter combination in Application Support. When a request fails because the network is down, it serves the cached copy with its Fetched time. Sign-out clears the cache.
-- A 401 or an expired token opens a sign-in sheet over the current window, and the screen reloads after sign-in succeeds. Only the access and refresh tokens are stored, in the Keychain. The password is never stored.
+- A 401 or an expired token opens a sign-in sheet over the current window, and the screen reloads after sign-in succeeds. The Keychain holds the access and refresh tokens, the User and their Brands as of the last sign-in, and the Active Brand. The password is never stored. The Brand list refreshes only when the User signs in, not on launch.
 - Sign-in is native. Sign-up, forgot password and accepting invites open the matching pages on the Spryg website.
 - The app is signed with Developer ID, notarized and shipped as a `.dmg`. Updates come through Sparkle, with the appcast and `.dmg` files published as GitHub Releases in a new `spryg-io/spryg-mac-releases` repo. The website's `/download` page links to it.
 - Crash reports come from Apple's built-in reporting only (Xcode Organizer). There's no Mixpanel or other analytics SDK.
