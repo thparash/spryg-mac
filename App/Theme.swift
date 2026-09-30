@@ -30,6 +30,8 @@ enum Theme {
     /// The web dashboard renders in the system font (SF on a Mac), so the app does too.
     static let pageTitle = Font.system(size: 24, weight: .bold)
     static let cardTitle = Font.system(size: 16, weight: .semibold)
+    /// Small labels such as "Active" and "Superuser".
+    static let badge = Font.caption.weight(.semibold)
 
     // MARK: Shape
 

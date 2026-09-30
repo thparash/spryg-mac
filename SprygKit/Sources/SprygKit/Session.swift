@@ -6,13 +6,19 @@ import Observation
 @Observable
 public final class Session {
     public private(set) var user: User?
+    /// The one Brand the app is showing. Every screen except Command Center shows its data.
+    public private(set) var activeBrand: Brand?
 
     private let environment: SprygEnvironment
+    private var accessToken: String?
 
     public init(environment: SprygEnvironment) {
         self.environment = environment
         // An unreadable stored session is treated as signed out.
-        user = (try? environment.sessionStore.load())?.user
+        let stored = try? environment.sessionStore.load()
+        user = stored?.user
+        accessToken = stored?.accessToken
+        activeBrand = stored.flatMap(Self.restoredActiveBrand(from:))
     }
 
     public func signIn(email: String, password: String) async throws {
@@ -37,18 +43,75 @@ public final class Session {
         guard let login = try? JSONDecoder().decode(LoginResponse.self, from: data) else {
             throw SignInError.unexpectedResponse
         }
-        try environment.sessionStore.save(
-            StoredSession(accessToken: login.access_token, refreshToken: login.refresh_token, user: login.user)
+        // Signing in again as the same User (say, after the session expired) keeps their Active Brand.
+        let previous = try? environment.sessionStore.load()
+        let keptBrandID = previous?.user.email.caseInsensitiveCompare(login.email) == .orderedSame
+            ? previous?.activeBrandID : nil
+        let stored = StoredSession(
+            accessToken: login.access_token,
+            refreshToken: login.refresh_token,
+            user: login.user,
+            activeBrandID: keptBrandID
         )
+        try environment.sessionStore.save(stored)
         user = login.user
+        accessToken = login.access_token
+        activeBrand = Self.restoredActiveBrand(from: stored)
+    }
+
+    /// A request to one Brand's own API, carrying the User's token. The token is only ever
+    /// attached for hosts matching `<name>.api.spryg.io`, because a Brand's `domain` comes
+    /// from the API and a bad value must not leak the token elsewhere.
+    public func brandRequest(path: String, for brand: Brand) throws -> URLRequest {
+        guard let accessToken else { throw BrandRequestError.signedOut }
+        guard brand.domain.wholeMatch(of: #/[a-z0-9-]+\.api\.spryg\.io/#) != nil else {
+            throw BrandRequestError.untrustedHost(brand.domain)
+        }
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = brand.domain
+        components.path = "/" + path.drop { $0 == "/" }
+        // Check the final URL too, so nothing in `path` can move the request to another host.
+        guard let url = components.url, url.host() == brand.domain else {
+            throw BrandRequestError.untrustedHost(brand.domain)
+        }
+        var request = URLRequest(url: url)
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+        return request
+    }
+
+    /// Makes `brand` the Active Brand and remembers it for the next launch.
+    /// A Brand that isn't assigned to the User is ignored. If it can't be remembered,
+    /// the next launch falls back to the first Brand alphabetically.
+    public func setActiveBrand(_ brand: Brand) {
+        guard user?.brands.contains(brand) == true else { return }
+        activeBrand = brand
+        guard var stored = try? environment.sessionStore.load() else { return }
+        stored.activeBrandID = brand.id
+        try? environment.sessionStore.save(stored)
     }
 
     /// Signs out in this window even if the stored session can't be removed,
     /// then throws so the User can be told their sign-in may still be saved on this Mac.
     public func signOut() throws {
         user = nil
+        activeBrand = nil
+        accessToken = nil
         try environment.sessionStore.clear()
     }
+}
+
+extension Session {
+    /// The remembered Brand if it's still assigned, otherwise the first alphabetically.
+    private static func restoredActiveBrand(from stored: StoredSession) -> Brand? {
+        stored.user.brands.first { $0.id == stored.activeBrandID } ?? stored.user.sortedBrands.first
+    }
+}
+
+public enum BrandRequestError: Error, Equatable {
+    case signedOut
+    case untrustedHost(String)
 }
 
 public enum SignInError: Error, Equatable {
